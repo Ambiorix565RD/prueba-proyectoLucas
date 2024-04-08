@@ -90,10 +90,13 @@
 
   /* Productos home*/
 #productos-container{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 10vw);
+  justify-content: space-evenly;
+  justify-items: center;
+  gap: 5vw;
+  margin: 3rem;
+ 
 }
 
 .tarjeta-producto{
@@ -130,7 +133,7 @@
   cursor:pointer;
 }
 
-#cart-container{
+#cartcontainer{
   max-width: 500px;
   margin: auto;
 }

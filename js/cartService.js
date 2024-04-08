@@ -1,16 +1,17 @@
 /*Index*/
 let bicicletas = [];
 
-const contenedorTarjetas = document.querySelector("#productos-container"),
+const contenedorTarjetas = document.querySelector(".productos-container"),
 cantidadElement = document.querySelector("#cantidad"),
 precioElement = document.querySelector("#precio"),
 carritoVacioElement = document.querySelector("#carrito-vacio"),
 totalesContainer = document.querySelector("#totales"),
 cuentaCarritoElement = document.querySelector(".cuenta-carrito"),
-reiniciar = document.querySelector("#reiniciar");
+reiniciar = document.querySelector("#reiniciar"),
+cartConteniner = document.querySelector("#cartcontainer")
 
-
-fetch('https://raw.githubusercontent.com/LucaDeseatto/CoderJs.github.io/master/db/data.json')
+//https://raw.githubusercontent.com/LucaDeseatto/CoderJs.github.io/master/db/data.json
+fetch('https://raw.githubusercontent.com/Ambiorix565RD/prueba-proyectoLucas/main/db/data.json')
 .then(response => response.json())
 .then(data => {
     console.log(data);
@@ -23,9 +24,15 @@ fetch('https://raw.githubusercontent.com/LucaDeseatto/CoderJs.github.io/master/d
 
 /*Carts*/
 
+  // Creación de tarjetas de productos en el carrito
 function crearTarjetasProductosCarrito() {
+  console.log("Creando tarjetas del carrito");  // Log para verificar la ejecución de la función
   contenedorTarjetas.innerHTML = "";
-  const productos = JSON.parse(localStorage.getItem("bicicletas"));
+  //Manejo de caso vacio
+  const productos = JSON.parse(localStorage.getItem("bicicletas")) || []; 
+
+  console.log("Productos del carrito:", productos);  // Log para verificar los productos obtenidos
+
   if (productos && productos.length > 0) {
     productos.forEach((producto) => {
       const nuevaBicicleta = document.createElement("div");
@@ -41,26 +48,25 @@ function crearTarjetasProductosCarrito() {
       </div>
       `;
 
-      const botones = nuevaBicicleta ? nuevaBicicleta.getElementsByTagName("button") : [];
+      const botones = nuevaBicicleta.getElementsByTagName("button");
       if (botones.length === 2) {
-        if (botones[0]) {
           botones[0].addEventListener("click", (e) => {
-              const cantidadElement = e.target.parentElement.getElementsByClassName("cantidad")[0];
+              const cantidadElement = e.target.parentElement.querySelector(".cantidad");
               cantidadElement.innerText = restarAlCarrito(producto);
-              crearTarjetasProductosCarrito();
               actualizarTotales();
           });
-      }
-        if (botones[1]) {
           botones[1].addEventListener("click", (e) => {
-              const cantidadElement = e.target.parentElement.getElementsByClassName("cantidad")[0];
+              const cantidadElement = e.target.parentElement.querySelector(".cantidad");
               cantidadElement.innerText = agregarAlCarrito(producto);
               actualizarTotales();
           });
       }
-      }
+      contenedorTarjetas.appendChild(nuevaBicicleta);
     });
-
+  } else {
+    console.log("El carrito está vacío");  // Log para cuando el carrito esté vacío
+    carritoVacioElement.classList.remove("escondido");
+    totalesContainer.classList.add("escondido");
   }
   revisarMensajeVacio();
   actualizarTotales();
@@ -82,7 +88,7 @@ function crearTarjetasProductosInicio(productos){
       </div>
       `;
       
-      contenedorTarjetas.appendChild(nuevaBicicleta);  // Línea 71
+      contenedorTarjetas.appendChild(nuevaBicicleta); 
       const boton = nuevaBicicleta.querySelector(".button");
       if (boton) {
           boton.addEventListener("click", () => agregarAlCarrito(producto));
@@ -145,6 +151,9 @@ function agregarAlCarrito(producto){
       cantidadProductoFinal = nuevaMemoria[indiceProducto].cantidad;
     }
     localStorage.setItem("bicicletas",JSON.stringify(nuevaMemoria));
+
+    console.log("Producto agregado al carrito:", nuevaMemoria);  // Log para verificar el producto agregado
+
     actualizarNumeroCarrito();
     return cantidadProductoFinal;
   }
@@ -162,6 +171,8 @@ function restarAlCarrito(producto){
     nuevaMemoria.splice(indiceProducto,1)
   };
   localStorage.setItem("bicicletas",JSON.stringify(nuevaMemoria));
+  
+  console.log("Producto restado del carrito:", nuevaMemoria);  // Log para verificar el producto restado
   actualizarNumeroCarrito();
   return cantidadProductoFinal;
 }
